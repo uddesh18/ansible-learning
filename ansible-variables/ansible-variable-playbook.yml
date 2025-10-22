@@ -1,0 +1,81 @@
+---
+- name: ansible variable playbook
+  hosts: hosts
+  become: yes
+  remote_user: torusapp
+  roles:
+    - custom-role
+
+
+  vars:
+    # String variable defined in the main playbook
+    main_playbook_variable: "This is a variable defined in the main playbook"
+
+    # Boolean variable defined in the main playbook
+    is_enabled: false
+    is_fruits: true
+
+    # List variable defined in the main playbook
+    fruits:
+      - apple
+      - banana
+      - orange
+
+    # Dictionary Variable defined in the main playbook
+    fruits_prices:
+      apple: 200
+      banana: 60
+      orange: 240
+
+    # Nested Dictionary Variable defined in the main playbook
+    fruits_basket:
+    - name: Uddesh
+      fruits:
+        - apple
+        - banana
+    - name: Himanshu
+      fruits:
+        - orange
+        - banana
+    
+  tasks:
+    - name: String variable from -> main_playbook_variable
+      debug:
+        var: main_playbook_variable
+
+    - name: Boolean variable from -> is_enabled
+      debug:
+        msg: "Varibale is_enabled is set to {{ is_enabled  }}"      
+      when: is_enabled
+
+    - name: List variable from -> fruits
+      debug:
+        msg: "Fruit: {{ item}}"
+      loop: "{{ fruits }}"
+      when: is_fruits
+
+    - name: List variable from -> fruits
+      debug:
+        var: fruits[0]
+    
+    # All about Jinja2 templating -> Ljst and Dictionary value access
+    - name: Dictionary variable from -> fruits_prices
+      debug:
+        msg: Price of {{ item }} is {{ fruits_prices[item] }} rs
+      loop: "{{ fruits }}"
+
+    # register variable use case
+    - name: Get price for apple 
+      command: echo "{{ fruits_prices['apple'] }}"
+      register: apple_price_as_registered_variable
+
+    - name: Show registered apple_price_as_registered_variable output
+      debug:
+        var: apple_price_as_registered_variable.stdout
+    
+    - name: Nested Dictionary variable from -> fruits_basket , fruits_prices
+      vars:
+        total_price: "{{ item.fruits | map('extract', fruits_prices) | map('int') | sum }}"
+      debug:
+        msg: "{{ item.name }} has bought {{ item.fruits | join(', ') }} and total cost is {{ total_price }} rs"
+      loop: "{{ fruits_basket }}"
