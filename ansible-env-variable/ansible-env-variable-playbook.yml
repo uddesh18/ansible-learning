@@ -1,0 +1,23 @@
+---
+- name: ansible env variable playbook
+  hosts: hosts
+  become: yes
+  remote_user: torusapp
+
+  environment:
+    EXAMPLE_ENV_VARIABLE: "This is an example of ansible global env variable"
+
+  tasks:
+  # Enviorment Variable Playbook level
+  - name: Accessing Enviorment Variable Playbook level
+    ansible.builtin.command: "echo $EXAMPLE_ENV_VARIABLE"
+  
+  # Enviorment Variable Task level
+  - name: Accessing Enviorment Variable Task level
+    environment:
+      TASK_LEVEL_ENV_VARIABLE: "This is an example of ansible task level env variable"
+    ansible.builtin.command: "echo $TASK_LEVEL_ENV_VARIABLE"
+
+  # Testing Enviorment Variable 
+  - name: Accessing System Enviorment Variable
+    ansible.builtin.command: "echo $EXAMPLE_ENV_VARIABLE $TASK_LEVEL_ENV_VARIABLE"

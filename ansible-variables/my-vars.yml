@@ -1,0 +1,2 @@
+---
+vars_from_my_vars_yml: "This is variable valur from my-vars.yml"

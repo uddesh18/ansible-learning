@@ -37,6 +37,9 @@
       fruits:
         - orange
         - banana
+
+  vars_files:
+    - my-vars.yml
     
   tasks:
     - name: String variable from -> main_playbook_variable
@@ -79,3 +82,13 @@
       debug:
         msg: "{{ item.name }} has bought {{ item.fruits | join(', ') }} and total cost is {{ total_price }} rs"
       loop: "{{ fruits_basket }}"
+
+    # Variable from vars_files -> my-vars.yml
+    - name: Variable from vars_files -> my-vars.yml
+      debug:
+        var: vars_from_my_vars_yml
+
+    # Accessing Variables at runtime
+    - name: Accessing Variables at runtime
+      debug:
+        var: version
